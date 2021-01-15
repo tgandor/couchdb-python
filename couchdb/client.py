@@ -809,7 +809,9 @@ class Database(object):
         :return: the query results as a list of `Document` (or whatever `wrapper` returns)
         """
         status, headers, data = self.resource.post_json('_find', mango_query)
-        return map(wrapper or Document, data.get('docs', []))
+        if wrapper is None:
+            wrapper = Document
+        return [wrapper(doc) for doc in data.get('docs', [])]
 
     def explain(self, mango_query):
         """Explain a mango find-query.

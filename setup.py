@@ -39,8 +39,8 @@ else:
 
 setup(
     name = 'CouchDB',
-    version = '1.2.1',
-    description = 'Python library for working with CouchDB',
+    version = '1.2.1-tg',
+    description = 'Python library for working with CouchDB (personal fork)',
     long_description = \
 """This is a Python library for CouchDB. It provides a convenient high level
 interface for the CouchDB server.""",
@@ -58,8 +58,10 @@ interface for the CouchDB server.""",
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Database :: Front-Ends',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
