@@ -813,19 +813,19 @@ class Database(object):
         if page:
             query['limit'] = page
 
-        status, _, data = self.resource.post_json('_find', query)
-        if status != 200:
-            raise ValueError(f'Invalid status: {status}')
         if wrapper is None:
             wrapper = Document
 
+        status, headers, data = self.resource.post_json('_find', query)
+
+
         result = [wrapper(doc) for doc in data.get('docs', [])]
+        if not result:
+            return result
 
         while True:
             query['bookmark'] = data['bookmark']
-            status, _, data = self.resource.post_json('_find', query)
-            if status != 200:
-                raise ValueError(f'Invalid status: {status}')
+            status, headers, data = self.resource.post_json('_find', query)
             chunk = [wrapper(doc) for doc in data.get('docs', [])]
             if not chunk:
                 break
