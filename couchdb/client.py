@@ -780,7 +780,7 @@ class Database(object):
         }, rev=doc['_rev'])
         doc['_rev'] = data['rev']
 
-    def find(self, mango_query, wrapper=None):
+    def find(self, mango_query, wrapper=None, page=None):
         """Execute a mango find-query against the database.
 
         Note: only available for CouchDB version >= 2.0.0
@@ -808,10 +808,30 @@ class Database(object):
                         resulting documents
         :return: the query results as a list of `Document` (or whatever `wrapper` returns)
         """
-        status, headers, data = self.resource.post_json('_find', mango_query)
+        query = mango_query.copy()
+
+        if page:
+            query['limit'] = page
+
+        status, _, data = self.resource.post_json('_find', query)
+        if status != 200:
+            raise ValueError(f'Invalid status: {status}')
         if wrapper is None:
             wrapper = Document
-        return [wrapper(doc) for doc in data.get('docs', [])]
+
+        result = [wrapper(doc) for doc in data.get('docs', [])]
+
+        while True:
+            query['bookmark'] = data['bookmark']
+            status, _, data = self.resource.post_json('_find', query)
+            if status != 200:
+                raise ValueError(f'Invalid status: {status}')
+            chunk = [wrapper(doc) for doc in data.get('docs', [])]
+            if not chunk:
+                break
+            result.extend(chunk)
+
+        return result
 
     def explain(self, mango_query):
         """Explain a mango find-query.
