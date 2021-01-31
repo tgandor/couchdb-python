@@ -1200,6 +1200,15 @@ class Document(dict):
                                   dict([(k,v) for k,v in self.items()
                                         if k not in ('_id', '_rev')]))
 
+    def __getattribute__(self, attr):
+        try:
+            val = super().__getattribute__(attr)
+            return val
+        except AttributeError:
+            if attr not in self:
+                raise
+            return self[attr]
+
     @property
     def id(self):
         """The document ID.
